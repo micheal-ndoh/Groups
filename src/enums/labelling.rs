@@ -8,9 +8,9 @@ pub enum Labelling {
 impl From<&str> for Labelling {
     fn from(value: &str) -> Self {
         match value.to_lowercase().as_str() {
-            _ => Labelling::Numeric,
-            "Alphabetic" => Labelling::Alphabetic,
+           "Alphabetic" => Labelling::Alphabetic,
             "Alphanumeric" => Labelling::Alphanumeric,
+            _ => Labelling::Numeric,
         }
     }
 }
