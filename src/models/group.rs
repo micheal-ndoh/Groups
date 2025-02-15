@@ -3,6 +3,7 @@ use std::rc::Rc;
 use crate::{data_collection::{Collect, DataCollection}, models::{students::Student, topics::Topic}};
 
 #[derive(Debug, Clone)]
+
 pub struct Group {
     label: String,
     topic: Rc<Topic>,
@@ -20,6 +21,15 @@ impl Group {
             students: Vec::new(),
         }
         
+    }
+
+    pub fn new() -> Self {
+        Self {
+            id: 0,
+            label: String::from(""),
+            topic: Rc::new(Topic::new()),
+            students: Vec::new(),
+        }
     }
     // pub fn new() -> Self {
     //     Self {
@@ -71,5 +81,12 @@ impl Collect for Group {
          
 
         group
+    }
+}
+
+pub fn run() {
+    println!("Enter topics and type 'done' when done");
+    loop {
+        let _topic = Topic::collect(); 
     }
 }
