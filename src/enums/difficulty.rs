@@ -1,4 +1,3 @@
-use std::clone;
 
 #[derive(Debug, Clone)]
 pub enum Difficulty {
@@ -10,9 +9,9 @@ pub enum Difficulty {
 impl From<&str> for Difficulty {
     fn from(value: &str) -> Self {
         match value.to_lowercase().as_str() {
-            _ => Difficulty::Easy,
             "medium" => Difficulty::Medium,
             "hard" => Difficulty::Hard,
+            _ => Difficulty::Easy,
         }
     }
 }
