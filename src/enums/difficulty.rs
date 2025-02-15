@@ -1,8 +1,10 @@
-#[derive(Debug)]
+use std::clone;
+
+#[derive(Debug, Clone)]
 pub enum Difficulty {
     Hard,
     Medium,
-    Easy
+    Easy,
 }
 
 impl From<&str> for Difficulty {
@@ -10,17 +12,17 @@ impl From<&str> for Difficulty {
         match value.to_lowercase().as_str() {
             _ => Difficulty::Easy,
             "medium" => Difficulty::Medium,
-            "hard"=> Difficulty::Hard
+            "hard" => Difficulty::Hard,
         }
     }
 }
 
 impl Into<&str> for Difficulty {
-    fn into(self) -> &'static str {  
-     match self { 
-        Difficulty::Hard => "hard",
-        Difficulty::Medium => "medium",
-        Difficulty::Easy => "easy"
-     }
+    fn into(self) -> &'static str {
+        match self {
+            Difficulty::Hard => "hard",
+            Difficulty::Medium => "medium",
+            Difficulty::Easy => "easy",
+        }
     }
-} 
+}

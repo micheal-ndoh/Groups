@@ -1,11 +1,7 @@
-use std::fs::File;
 fn main() {
-
-    
+    println!("Hello, world!");
 }
-
-
+mod application;
 mod data_collection;
-mod topics;
-mod group;
-mod students;
+mod enums;
+mod models;
