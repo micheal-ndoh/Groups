@@ -84,9 +84,4 @@ impl Collect for Group {
     }
 }
 
-pub fn run() {
-    println!("Enter topics and type 'done' when done");
-    loop {
-        let _topic = Topic::collect(); 
-    }
-}
+
