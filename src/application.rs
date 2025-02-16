@@ -6,7 +6,7 @@ use crate::{
     models::{group::Group, topics::Topic},
 };
 
-struct Application {
+pub struct Application {
     state: AppState,
 }
 
