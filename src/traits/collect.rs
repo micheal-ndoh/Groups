@@ -1,4 +1,4 @@
-pub trait Collect{
-    fn collect(&self) -> &Self;
-    
-}
+pub trait Collect {
+    fn collect() -> Self;
+  }
+  

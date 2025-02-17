@@ -1,26 +1,26 @@
 #[derive(Debug)]
-pub enum Labelling {
-    Numeric,
-    Alphabetic,
-    Alphanumeric
+pub enum Labelling{
+  Numeric,
+  Alphabetic,
+  Alphanumeric
 }
 
 impl From<&str> for Labelling {
-    fn from(value: &str) -> Self {
-        match value.to_lowercase().as_str() {
-           "Alphabetic" => Labelling::Alphabetic,
-            "Alphanumeric" => Labelling::Alphanumeric,
-            _ => Labelling::Numeric,
-        }
-    }
+  fn from(value: &str) -> Self {
+      match  value.to_lowercase().as_str() {
+          "alphanumeric" => Self::Alphanumeric, 
+          "alphabetic" => Self::Alphabetic,
+          _ => Self::Numeric,
+      }
+  }
 }
 
 impl Into<&str> for Labelling {
-    fn into(self) -> &'static str {
-        match self {
-            Self::Alphanumeric => "Alphanumeric",
-            Self::Alphabetic => "Alphabetic",
-            Self::Numeric => "Numeric",
-        }
-    }
+  fn into(self) -> &'static str {
+      match self {
+        Self::Alphabetic => "alphabetic",
+        Self::Alphanumeric => "alphanumeric",
+        Self::Numeric => "numeric",
+      }
+  }
 }

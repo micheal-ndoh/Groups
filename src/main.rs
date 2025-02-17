@@ -1,11 +1,12 @@
-mod application;
-mod data_collection;
-mod enums;
-mod models;
-
 use application::Application;
 
 fn main() {
-    let app = Application::new();
-    Application::run();
+    let mut app  = Application::new();
+    app.run();
 }
+
+mod data_collection;
+mod models;
+mod application;
+mod enums;
+mod traits;

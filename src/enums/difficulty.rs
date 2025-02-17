@@ -1,4 +1,3 @@
-
 #[derive(Debug, Clone)]
 pub enum Difficulty {
     Hard,
@@ -8,10 +7,10 @@ pub enum Difficulty {
 
 impl From<&str> for Difficulty {
     fn from(value: &str) -> Self {
-        match value.to_lowercase().as_str() {
-            "medium" => Difficulty::Medium,
-            "hard" => Difficulty::Hard,
-            _ => Difficulty::Easy,
+        match  value.to_lowercase().as_str() {
+            "hard" => Self::Hard,
+            "medium" => Self::Medium,
+            _ => Self::Easy,
         }
     }
 }
@@ -19,9 +18,9 @@ impl From<&str> for Difficulty {
 impl Into<&str> for Difficulty {
     fn into(self) -> &'static str {
         match self {
-            Difficulty::Hard => "hard",
-            Difficulty::Medium => "medium",
-            Difficulty::Easy => "easy",
+            Self::Hard => "hard",
+            Self::Medium => "medium",
+            Self::Easy => "easy",
         }
     }
 }

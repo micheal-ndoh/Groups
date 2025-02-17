@@ -1,8 +1,8 @@
-use crate::enums::difficulty::Difficulty;
+use crate::traits::collect::Collect;
+use crate::traits::gen_data_id::GenDataId;
+use crate::{data_collection::DataCollection, enums::difficulty::Difficulty};
 
-use crate::data_collection::{Collect, DataCollection};
-
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct Topic {
     id: u32,
     title: String,
@@ -17,24 +17,20 @@ impl Topic {
             difficulty: Difficulty::Easy,
         }
     }
-    pub fn set_id(&mut self, id: u32) {
-        self.id = id;
-    }
+
     pub fn set_title(&mut self, title: String) {
-        self.title = title;
-    }
-    pub fn set_difficulty(&mut self, difficulty: Difficulty) {
-        self.difficulty = difficulty;
+        self.title = title
     }
 
-    pub fn get_id(&self) -> u32 {
-        self.id
+    pub fn set_difficulty(&mut self, difficulty: Difficulty) {
+        self.difficulty = difficulty
     }
+
     pub fn get_title(&self) -> String {
         self.title.clone()
     }
 
-    pub fn get_difficulty(&self) -> Difficulty {
+    pub fn get_difficulty(&mut self) -> Difficulty {
         self.difficulty.clone()
     }
 }
@@ -42,15 +38,22 @@ impl Topic {
 impl Collect for Topic {
     fn collect() -> Self {
         let mut topic = Self::new();
-        // println!("Enter topic. \n type done when completed");
-        let prompt = Some("Enter topic title".to_string());
-        topic.title = DataCollection::input(prompt);
 
-        let prompt: Option<String> =
-            Some("Enter topic difficulty (easy, medium, hard)".to_string());
-        let difficulty: String = DataCollection::input(prompt);
+        topic.title = DataCollection::input("Enter topic title");
+
+        let difficulty = DataCollection::input("Enter topic difficulty");
         topic.difficulty = Difficulty::from(difficulty.as_str());
 
         topic
+    }
+}
+
+impl GenDataId<u32> for  Topic {
+     fn set_id(&mut self, id: u32) {
+        self.id = id
+    }
+
+    fn get_id(&self) -> u32 {
+        self.id
     }
 }
