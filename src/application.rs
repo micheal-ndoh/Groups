@@ -1,39 +1,46 @@
 use std::fmt::Debug;
 
+use rand::seq::SliceRandom;
+
 use crate::{
     data_collection::DataCollection,
     enums::labelling::Labelling,
-    models::{group::Group, students::Students, topics::Topic},
+    models::{
+        group::Group,
+        students::{self, Students},
+        topics::Topic,
+    },
     traits::{collect::Collect, gen_data_id::GenDataId},
 };
-// #[derive{Debug}]
-struct AppState {
-    topic: Vec<Topic>,
+
+struct AppState<'a, 'b> {
+    topics: Vec<Topic>,
     students: Vec<Students>,
     labelling: Labelling,
-    groups: Vec<Group>,
+    groups: Vec<Group<'a, 'b>>,
 }
 
-pub struct Application {
-    state: AppState,
+pub struct Application<'a, 'b> {
+    state: AppState<'a, 'b>,
 }
 
-impl Application {
+impl<'a, 'b> Application<'a, 'b> {
     pub fn new() -> Self {
         Self {
             state: AppState {
                 groups: Vec::new(),
                 labelling: Labelling::Numeric,
-                topic: Vec::new(),
+                topics: Vec::new(),
                 students: Vec::new(),
             },
         }
     }
+
     pub fn run(&mut self) {
         println!("Enter new topics.");
 
         loop {
-            Self::collect_gen_data(&mut self.state.topic);
+            Self::collect_gen_data(&mut self.state.topics);
 
             if Self::should_proceed() {
                 break;
@@ -63,11 +70,34 @@ impl Application {
         !proceed.to_lowercase().eq("no")
     }
 
+    pub fn gen_groups(&mut self) {
+        use rand::rng;
+        let mut students = self.state.students.clone();
+        let mut rng_gen = rng();
+        students.shuffle(&mut rng_gen);
+        let mut groups = Vec::<Group>::new();
+        let nbr_of_members = self.state.students.len() / self.state.topics.len();
+        for topic in &self.state.topics {
+            let label = self.label_gen();
+            // Shuffle array of students
+
+            // let mut shuffled_students = self.state.students.as_ref();
+            // shuffled_students.shuffle(&mut rand::thread_rng());
+
+            // Select group members
+            let grp_students = &self.state.students[0..nbr_of_members];
+            let grp_students = grp_students.iter().map(|s| s).collect();
+            let new_group = Group::from(label, topic, grp_students);
+            groups.push(new_group);
+        }
+        // self.state.groups = groups;
+    }
+
     pub fn label_gen(&self) -> String {
         match self.state.labelling {
             Labelling::Alphabetic => self.num_label_gen(),
             Labelling::Alphanumeric => todo!(),
-            Labelling::Numeric => todo!(),
+            Labelling::Numeric => self.num_label_gen(),
         }
     }
 

@@ -2,7 +2,7 @@ use crate::{
     data_collection::DataCollection,
     traits::{collect::Collect, gen_data_id::GenDataId},
 };
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Students {
     id: u32,
     name: String,
