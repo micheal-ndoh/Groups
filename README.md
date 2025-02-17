@@ -13,6 +13,7 @@ This Rust program aims to automatically assign students to groups, each associat
   - Each group is assigned a unique topic.
   - The number of topics cannot exceed the number of students.
   - Topics form groups
+  - 
 
 - **Group Setup**:
 
@@ -45,3 +46,8 @@ This Rust program aims to automatically assign students to groups, each associat
 ### Optional Enhancements
 
 - **Binary File Storage**: For more efficient storage and retrieval of group data, the files may be saved in a binary format.
+  
+## Usage
+  
+- The user enters the topics and is been asked if they want to continue yes or no
+- 
