@@ -1,11 +1,11 @@
 use crate::{data_collection::DataCollection, traits::gen_data_id::GenDataId, traits::collect::Collect};
-use cli_table::{format::Justify, print_stdout, Cell, Style, Table};
+use cli_table::{format::Justify, Color ,Table};
 
 #[derive(Debug, Clone, Table)]
 pub struct Student {
     #[table(title = "ID", justify = "Justify::Right")]
     id: u32,
-    #[table(title = "Name" )]
+    #[table(title = "Name", color = "Color::Green", justify = "Justify::Left" , style = "Style::Bold")]
     name: String,
 }
 
@@ -13,21 +13,21 @@ impl Student {
     pub fn new() -> Self {
         Self {
             id: 0,
-            name: String::new(),
+            name: String::from(""),
         }
     }
 
-    pub fn set_name(&mut self, name: String) {
-        self.name = name;
-    }
+    // pub fn set_name(&mut self, name: String) {
+    //     self.name = name;
+    // }
 
-    pub fn get_id(&self) -> u32 {
-        self.id
-    }
+    // pub fn get_id(&self) -> u32 {
+    //     self.id
+    // }
 
-    pub fn get_name(&self) -> String {
-        self.name.clone()
-    }
+    // pub fn get_name(&self) -> String {
+    //     self.name.clone()
+    // }
 }
 
 impl GenDataId<u32> for Student {

@@ -3,13 +3,13 @@ use crate::traits::gen_data_display::GenDataDisplay;
 use crate::traits::gen_data_id::GenDataId;
 use crate::traits::collect::Collect;
 use crate::enums::difficulty::Difficulty;
-use cli_table::{format::Justify, print_stdout, Cell, Style, Table};
+use cli_table::{format::Justify, print_stdout, Cell, Color, Style, Table};
 
 #[derive(Debug, Clone, Table)]
 pub struct Topic {
-    #[table(title = "ID" )]
+    #[table(title = "ID", color= "Color::Red", justify = "Justify::Right" )]
     id: u32,
-    #[table(title = "Title")]
+    #[table(title = "Title", color = "Color::Green", justify = "Justify::Center")]
     title: String,
     #[table(title = "Difficulty" )]
     difficulty: Difficulty,
@@ -53,17 +53,21 @@ impl GenDataId<u32> for Topic {
 
 impl Collect for Topic {
     fn collect() -> Self {
-        let title = DataCollection::input("Enter topic title: ");
-        let difficulty = match DataCollection::input("Enter difficulty (Easy, Medium, Hard): ").as_str() {
-            "Medium" => Difficulty::Medium,
-            "Hard" => Difficulty::Hard,
-            _ => Difficulty::Easy,
-        };
-        Self {
-            id: 0,
-            title,
-            difficulty,
-        }
+        let mut topic = Self::new();
+        topic.title = DataCollection::input("Enter topic title: ");
+
+        let difficulty =  DataCollection::input("Enter difficulty (Easy, Medium, Hard): ");
+        topic.difficulty = Difficulty::from(difficulty.as_str());
+        topic
+        //     "Medium" => Difficulty::Medium,
+        //     "Hard" => Difficulty::Hard,
+        //     _ => Difficulty::Easy,
+        // };
+        // Self {
+        //     id: 0,
+        //     title,
+        //     difficulty,
+        // }
     }
 }
 

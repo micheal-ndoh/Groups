@@ -4,8 +4,8 @@ use rand::seq::SliceRandom;
 
 use crate::{data_collection::DataCollection, enums::labelling::Labelling,
     models::{
-        group::Group,
-        student::Student,
+        group::{self, Group},
+        student::{self, Student},
         topic::Topic,
     },
     traits::{collect::Collect, gen_data_id::GenDataId},
@@ -14,7 +14,7 @@ use crate::{data_collection::DataCollection, enums::labelling::Labelling,
 #[derive(Debug)]
 struct AppState {
     labelling: Labelling,
-    Table: Vec<Topic>,
+    topics: Vec<Topic>,
     students: Vec<Student>,
     groups: Vec<Group>,
 }
@@ -30,7 +30,7 @@ impl Application {
                 labelling: Labelling::Numeric,
                 groups: Vec::new(),
                 students: Vec::new(),
-                Table: Vec::new(),
+                topics: Vec::new(),
             },
         }
     }
@@ -38,19 +38,19 @@ impl Application {
     pub fn run(&mut self) {
         println!("Enter new Table.");
         let AppState{
-            Table,
+            topics,
             students,
             ..
         } = &mut self.state;
 
         loop {
-            Self::collect_gen_data(Table);
+            Self::collect_gen_data(topics);
 
             if Self::should_break() {
                 break;
             }
         }
-        let _ = Helper::display(Table.iter());
+        let _ = Helper::display(topics.iter());
 
         println!("Enter student names.");
 
@@ -64,26 +64,34 @@ impl Application {
         let _ = Helper::display(students.iter());
         // Generate groups
         self.gen_groups();
-        let group = self.state.groups.clone();
 
-        Helper::display(&self.state.groups.clone());
+        let groups = self.state.groups.clone();
+        for group in groups {
+            let topic = group.get_topics();
+            let students = group.get_students();
+            println!("{:?}", topic);
+            Helper::display(vec![group].iter());
+
+            Helper::display(students.iter());
+        }
+        // Helper::display(&self.state.groups.clone());
     }
 
     fn gen_groups(&mut self) {
         use rand::rng;
 
         let AppState {
-            Table,
+            topics,
             students,
             labelling,
             ..
         } = &self.state;
 
         let mut new_groups = Vec::new();
-        let nbr_of_members = students.len() / Table.len();
+        let nbr_of_members = students.len() / topics.len();
         let mut assigned_student_ids = HashSet::<u32>::new();
 
-        for topic in Table {
+        for topic in topics {
             let current_group_id = new_groups.len() + 1;
             let label = Self::label_gen(labelling.to_owned(), current_group_id);
 
@@ -159,8 +167,5 @@ impl Helper {
     }
     pub fn display<T: Table + WithTitle>(table: T) {
 let _ = print_stdout(table.with_title());
-        
-        
-    }
-
+      }
 }

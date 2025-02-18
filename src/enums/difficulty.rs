@@ -30,6 +30,6 @@ impl Into<String> for Difficulty {
 impl fmt::Display for Difficulty {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         // Use the Into trait to convert the enum to a string
-        write!(f, "{}", self)
+        write!(f, "{:?}", self)
     }
 }
