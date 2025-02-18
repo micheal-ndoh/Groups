@@ -1,37 +1,38 @@
-use std::fmt::Debug;
+use std::{collections::HashSet, fmt::Debug};
 
 use rand::seq::SliceRandom;
 
 use crate::{
     data_collection::DataCollection,
-    enums::labelling::Labelling,
+    enums::labelling::{self, Labelling},
     models::{
-        group::Group,
-        students::{self, Students},
-        topics::Topic,
+        group::{self, Group},
+        student::Student,
+        topic::Topic,
     },
     traits::{collect::Collect, gen_data_id::GenDataId},
 };
 
-struct AppState<'a, 'b> {
-    topics: Vec<Topic>,
-    students: Vec<Students>,
+#[derive(Debug)]
+struct AppState {
     labelling: Labelling,
-    groups: Vec<Group<'a, 'b>>,
+    topics: Vec<Topic>,
+    students: Vec<Student>,
+    groups: Vec<Group>,
 }
 
-pub struct Application<'a, 'b> {
-    state: AppState<'a, 'b>,
+pub struct Application {
+    state: AppState,
 }
 
-impl<'a, 'b> Application<'a, 'b> {
+impl Application {
     pub fn new() -> Self {
         Self {
             state: AppState {
-                groups: Vec::new(),
                 labelling: Labelling::Numeric,
-                topics: Vec::new(),
+                groups: Vec::new(),
                 students: Vec::new(),
+                topics: Vec::new(),
             },
         }
     }
@@ -42,81 +43,110 @@ impl<'a, 'b> Application<'a, 'b> {
         loop {
             Self::collect_gen_data(&mut self.state.topics);
 
-            if Self::should_proceed() {
+            if Self::should_break() {
                 break;
             }
         }
 
-        println!("Enter the students names");
+        println!("Enter student names.");
 
         loop {
             Self::collect_gen_data(&mut self.state.students);
 
-            if Self::should_proceed() {
+            if Self::should_break() {
                 break;
             }
         }
+
+        // Generate groups
+        self.gen_groups();
     }
 
-    fn collect_gen_data<T: GenDataId<u32> + Debug + Collect>(element: &mut Vec<T>) {
-        let mut new_element = T::collect();
-        new_element.set_id(element.len() as u32);
-        println!("{:?}", new_element);
-        element.push(new_element);
-    }
-
-    fn should_proceed() -> bool {
-        let proceed = DataCollection::input("Do you want to continue?(yes/no)[yes]");
-        !proceed.to_lowercase().eq("no")
-    }
-
-    pub fn gen_groups(&mut self) {
+    fn gen_groups(&mut self) {
         use rand::rng;
-        let mut students = self.state.students.clone();
-        let mut rng_gen = rng();
-        students.shuffle(&mut rng_gen);
-        let mut groups = Vec::<Group>::new();
-        let nbr_of_members = self.state.students.len() / self.state.topics.len();
-        for topic in &self.state.topics {
-            let label = self.label_gen();
-            // Shuffle array of students
 
-            // let mut shuffled_students = self.state.students.as_ref();
-            // shuffled_students.shuffle(&mut rand::thread_rng());
+        let AppState {
+            topics,
+            students,
+            labelling,
+            ..
+        } = &self.state;
 
-            // Select group members
-            let grp_students = &self.state.students[0..nbr_of_members];
-            let grp_students = grp_students.iter().map(|s| s).collect();
-            let new_group = Group::from(label, topic, grp_students);
-            groups.push(new_group);
+        let mut new_groups = Vec::new();
+        let nbr_of_members = students.len() / topics.len();
+        let mut assigned_student_ids = HashSet::<u32>::new();
+
+        for topic in topics {
+            let current_group_id = new_groups.len() + 1;
+            let label = Self::label_gen(labelling.to_owned(), current_group_id);
+
+            let mut students: Vec<Student> = self
+                .state
+                .students
+                .iter()
+                .filter(|s| !assigned_student_ids.contains(&s.get_id()))
+                .map(|s| s.to_owned())
+                .collect();
+
+            // shuffle array of students
+            let mut rng_gen = rng();
+            students.shuffle(&mut rng_gen);
+
+            // select group members safely
+            let grp_members = students
+                .iter()
+                .take(nbr_of_members)
+                .map(|student| {
+                    assigned_student_ids.insert(student.get_id());
+                    student
+                })
+                .cloned()
+                .collect();
+
+            let mut new_group = Group::from(label, topic.to_owned(), grp_members);
+            new_group.set_id(new_groups.len() as u32);
+            println!("{:?}", new_group);
+            new_groups.push(new_group);
         }
-        // self.state.groups = groups;
+
+        self.state.groups.append(&mut new_groups.clone());
     }
 
-    pub fn label_gen(&self) -> String {
-        match self.state.labelling {
-            Labelling::Alphabetic => self.num_label_gen(),
+    fn collect_gen_data<T: GenDataId<u32> + Debug + Collect>(elements: &mut Vec<T>) {
+        let mut new_element = T::collect();
+        new_element.set_id((elements.len() + 1) as u32);
+        println!("{:?}", new_element);
+        elements.push(new_element);
+    }
+
+    fn should_break() -> bool {
+        let proceed = DataCollection::input("Do you want to continue?(yes/no)[yes]:");
+        proceed.to_lowercase().eq("no")
+    }
+
+    fn label_gen(labelling: Labelling, groups_len: usize) -> String {
+        match labelling {
+            Labelling::Numeric => Self::num_label_gen(groups_len),
+            Labelling::Alphabetic => todo!(),
             Labelling::Alphanumeric => todo!(),
-            Labelling::Numeric => self.num_label_gen(),
         }
     }
 
-    pub fn num_label_gen(&self) -> String {
-        (self.state.groups.len() + 1).to_string()
+    fn num_label_gen(groups_len: usize) -> String {
+        (groups_len + 1).to_string()
     }
 }
 
 pub struct Helper;
-
 impl Helper {
     pub fn now_in_secs() -> u64 {
         use std::time::{SystemTime, UNIX_EPOCH};
-        let now = SystemTime::now();
 
+        let now = SystemTime::now();
         match now.duration_since(UNIX_EPOCH) {
             Ok(value) => value.as_secs(),
             Err(_) => {
-                panic!("time went backward")
+                panic!("Time went backward!")
             }
         }
     }
