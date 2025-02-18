@@ -104,7 +104,7 @@ impl Application {
                 .collect();
 
             let mut new_group = Group::from(label, topic.to_owned(), grp_members);
-            new_group.set_id(new_groups.len() as u32);
+            new_group.set_id(current_group_id as u32);
             println!("{:?}", new_group);
             new_groups.push(new_group);
         }
