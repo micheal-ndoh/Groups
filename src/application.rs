@@ -1,22 +1,20 @@
-use std::{collections::HashSet, fmt::Debug, vec};
-
+use std::{collections::HashSet, fmt::Debug};
+use cli_table::{print_stdout, Table, WithTitle};
 use rand::seq::SliceRandom;
 
-use crate::{
-    data_collection::DataCollection,
-    enums::labelling::{self, Labelling},
+use crate::{data_collection::DataCollection, enums::labelling::Labelling,
     models::{
-        group::{self, Group},
+        group::Group,
         student::Student,
         topic::Topic,
     },
     traits::{collect::Collect, gen_data_id::GenDataId},
-};
 
+};
 #[derive(Debug)]
 struct AppState {
     labelling: Labelling,
-    topics: Vec<Topic>,
+    Table: Vec<Topic>,
     students: Vec<Student>,
     groups: Vec<Group>,
 }
@@ -32,52 +30,60 @@ impl Application {
                 labelling: Labelling::Numeric,
                 groups: Vec::new(),
                 students: Vec::new(),
-                topics: Vec::new(),
+                Table: Vec::new(),
             },
         }
     }
 
     pub fn run(&mut self) {
-        println!("Enter new topics.");
+        println!("Enter new Table.");
+        let AppState{
+            Table,
+            students,
+            ..
+        } = &mut self.state;
 
         loop {
-            Self::collect_gen_data(&mut self.state.topics);
+            Self::collect_gen_data(Table);
 
             if Self::should_break() {
                 break;
             }
         }
-       let _ = Helper::display(self.state.topics.clone());
+        let _ = Helper::display(Table.iter());
 
         println!("Enter student names.");
 
         loop {
-            Self::collect_gen_data(&mut self.state.students);
+            Self::collect_gen_data(students);
 
             if Self::should_break() {
                 break;
             }
         }
-      
+        let _ = Helper::display(students.iter());
         // Generate groups
         self.gen_groups();
+        let group = self.state.groups.clone();
+
+        Helper::display(&self.state.groups.clone());
     }
 
     fn gen_groups(&mut self) {
         use rand::rng;
 
         let AppState {
-            topics,
+            Table,
             students,
             labelling,
             ..
         } = &self.state;
 
         let mut new_groups = Vec::new();
-        let nbr_of_members = students.len() / topics.len();
+        let nbr_of_members = students.len() / Table.len();
         let mut assigned_student_ids = HashSet::<u32>::new();
 
-        for topic in topics {
+        for topic in Table {
             let current_group_id = new_groups.len() + 1;
             let label = Self::label_gen(labelling.to_owned(), current_group_id);
 
@@ -106,7 +112,7 @@ impl Application {
 
             let mut new_group = Group::from(label, topic.to_owned(), grp_members);
             new_group.set_id(current_group_id as u32);
-            println!("{:?}", new_group);
+            // println!("{:?}", new_group);
             new_groups.push(new_group);
         }
 
@@ -116,7 +122,7 @@ impl Application {
     fn collect_gen_data<T: GenDataId<u32> + Debug + Collect>(elements: &mut Vec<T>) {
         let mut new_element = T::collect();
         new_element.set_id((elements.len() + 1) as u32);
-        println!("{:?}", new_element);
+        // println!("{:?}", new_element);
         elements.push(new_element);
     }
 
@@ -151,27 +157,10 @@ impl Helper {
             }
         }
     }
-    pub fn display(topics: Vec<Topic>) -> Result<(), std::io::Error> {
-        use cli_table::{format::Justify, print_stdout, Cell, Style, Table};
-
-        let table = topics
-            .iter()
-            .map(|topic| {
-                vec![
-                    topic.get_id().cell(),
-                    topic.get_title().cell(),
-                    topic.get_difficulty().cell(),
-                ]
-            })
-            .collect()
-            .table()
-            .title(vec![
-                "ID".cell().bold(true),
-                "Title".cell().bold(true),
-                "Difficulty".cell().bold(true),
-            ])
-            .bold(true);
-        print_stdout(table)
-       
+    pub fn display<T: Table + WithTitle>(table: T) {
+let _ = print_stdout(table.with_title());
+        
+        
     }
+
 }

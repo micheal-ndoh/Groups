@@ -1,6 +1,6 @@
-use derive_more::Display;
+use std::fmt;
 
-#[derive(Debug, Clone, Display)]
+#[derive(Debug, Clone)]
 pub enum Difficulty {
     Hard,
     Medium,
@@ -9,7 +9,7 @@ pub enum Difficulty {
 
 impl From<&str> for Difficulty {
     fn from(value: &str) -> Self {
-        match  value.to_lowercase().as_str() {
+        match value.to_lowercase().as_str() {
             "hard" => Self::Hard,
             "medium" => Self::Medium,
             _ => Self::Easy,
@@ -17,18 +17,19 @@ impl From<&str> for Difficulty {
     }
 }
 
-impl Into<&str> for Difficulty {
-    fn into(self) -> &'static str {
+impl Into<String> for Difficulty {
+    fn into(self) -> String {
         match self {
-            Self::Hard => "hard",
-            Self::Medium => "medium",
-            Self::Easy => "easy",
+            Self::Hard => "hard".to_string(),
+            Self::Medium => "medium".to_string(),
+            Self::Easy => "easy".to_string(),
         }
     }
 }
-impl Display for Difficulty {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self())
+
+impl fmt::Display for Difficulty {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // Use the Into trait to convert the enum to a string
+        write!(f, "{}", self)
     }
 }
-

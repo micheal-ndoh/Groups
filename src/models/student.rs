@@ -1,8 +1,11 @@
 use crate::{data_collection::DataCollection, traits::gen_data_id::GenDataId, traits::collect::Collect};
+use cli_table::{format::Justify, print_stdout, Cell, Style, Table};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Table)]
 pub struct Student {
+    #[table(title = "ID", justify = "Justify::Right")]
     id: u32,
+    #[table(title = "Name" )]
     name: String,
 }
 

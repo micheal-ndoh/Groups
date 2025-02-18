@@ -3,11 +3,15 @@ use crate::traits::gen_data_display::GenDataDisplay;
 use crate::traits::gen_data_id::GenDataId;
 use crate::traits::collect::Collect;
 use crate::enums::difficulty::Difficulty;
+use cli_table::{format::Justify, print_stdout, Cell, Style, Table};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Table)]
 pub struct Topic {
+    #[table(title = "ID" )]
     id: u32,
+    #[table(title = "Title")]
     title: String,
+    #[table(title = "Difficulty" )]
     difficulty: Difficulty,
 }
 

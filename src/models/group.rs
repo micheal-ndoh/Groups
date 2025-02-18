@@ -1,16 +1,25 @@
-// group.rs
+use cli_table::{format::Justify, print_stdout, Cell, Style, Table};
 use crate::{
     application::Helper,
     models::{student::Student, topic::Topic},
     traits::gen_data_id::GenDataId,
 };
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Table)]
 pub struct Group {
+    #[table(title = "ID", justify = "Justify::Right")]
     id: u32,
+
+    #[table(title = "Label" )]
     label: String,
+
+    #[table(skip)]
     topic: Topic,
+
+    #[table(skip)]
     students: Vec<Student>,
+    
+    #[table(title = "Generated At")]
     generated_at: u64,
 }
 
