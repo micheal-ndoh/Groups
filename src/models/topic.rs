@@ -1,4 +1,5 @@
 use crate::data_collection::DataCollection;
+use crate::traits::gen_data_display::GenDataDisplay;
 use crate::traits::gen_data_id::GenDataId;
 use crate::traits::collect::Collect;
 use crate::enums::difficulty::Difficulty;
@@ -60,4 +61,9 @@ impl Collect for Topic {
             difficulty,
         }
     }
+}
+
+impl GenDataDisplay for Topic {
+   fn display(){}
+    
 }

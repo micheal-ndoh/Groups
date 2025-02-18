@@ -1,4 +1,6 @@
-#[derive(Debug, Clone)]
+use derive_more::Display;
+
+#[derive(Debug, Clone, Display)]
 pub enum Difficulty {
     Hard,
     Medium,
@@ -24,3 +26,9 @@ impl Into<&str> for Difficulty {
         }
     }
 }
+impl Display for Difficulty {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self())
+    }
+}
+

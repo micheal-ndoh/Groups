@@ -1,4 +1,4 @@
-use std::{collections::HashSet, fmt::Debug};
+use std::{collections::HashSet, fmt::Debug, vec};
 
 use rand::seq::SliceRandom;
 
@@ -47,6 +47,7 @@ impl Application {
                 break;
             }
         }
+       let _ = Helper::display(self.state.topics.clone());
 
         println!("Enter student names.");
 
@@ -57,7 +58,7 @@ impl Application {
                 break;
             }
         }
-
+      
         // Generate groups
         self.gen_groups();
     }
@@ -149,5 +150,28 @@ impl Helper {
                 panic!("Time went backward!")
             }
         }
+    }
+    pub fn display(topics: Vec<Topic>) -> Result<(), std::io::Error> {
+        use cli_table::{format::Justify, print_stdout, Cell, Style, Table};
+
+        let table = topics
+            .iter()
+            .map(|topic| {
+                vec![
+                    topic.get_id().cell(),
+                    topic.get_title().cell(),
+                    topic.get_difficulty().cell(),
+                ]
+            })
+            .collect()
+            .table()
+            .title(vec![
+                "ID".cell().bold(true),
+                "Title".cell().bold(true),
+                "Difficulty".cell().bold(true),
+            ])
+            .bold(true);
+        print_stdout(table)
+       
     }
 }
