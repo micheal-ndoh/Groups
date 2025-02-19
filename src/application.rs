@@ -165,7 +165,9 @@ impl Helper {
             }
         }
     }
-    pub fn display<T: Table + WithTitle>(table: T) {
-let _ = print_stdout(table.with_title());
-      }
+
+    pub fn display<T: Table + WithTitle>(table: T) -> Result<(), std::io::Error> {
+        let table = table.with_title();
+        print_stdout(table)
+    }
 }
