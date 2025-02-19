@@ -1,7 +1,8 @@
 
 # Rust Program for Group Assignment Exercise
 
-This Rust program aims to automatically assign students to groups, each associated with a topic, while ensuring balance and proper data management. The groups and their details are saved to files, which are only accessible by the program in a read-only format. Additionally, the program ensures an even distribution of students across groups.
+This Rust program aims to automatically assign students to groups, each associated with a topic, while ensuring each student fall under a group and has a topic. 
+The groups and their details are saved to files, which are only accessible by the program in a read-only format. Additionally, the program ensures an even distribution of students across groups.
 
 ## Requirements
 
@@ -20,6 +21,7 @@ This Rust program aims to automatically assign students to groups, each associat
   - Each group must have a label.
     - Students should be evenly distributed across the groups based on topic difficulty.
     - A student cannot belong to more than one group.
+    - 
 - **File Management**:
   
   - All the  groups are saved to a  file, which should be read-only and accessible only by the program.
@@ -33,9 +35,6 @@ This Rust program aims to automatically assign students to groups, each associat
 2. **Topic Assignment**:
     - Each group will be assigned a unique topic. The number of topics should not exceed the number of students, ensuring that every group has a dedicated topic.
 
-3. **Secure Data Storage**:
-    - Each group's data (students and their assigned topics) will be stored in a read only file.
-    - These file will be accessible only by the program and will be read-only to prevent external modifications.
 
 ## Objectives
 
@@ -43,11 +42,17 @@ This Rust program aims to automatically assign students to groups, each associat
 - **File Security**: Ensure that the files are stored in a secure manner, where they are read-only and can only be accessed by the program.
 - **Balanced Group Distribution**: Distribute students evenly across all groups based on class size.
   
-### Optional Enhancements
+### Optional
 
-- **Binary File Storage**: For more efficient storage and retrieval of group data, the files may be saved in a binary format.
+- **File Storage in binary**: For more efficient storage and retrieval of group data, the files may be saved in a binary format.
   
 ## Usage
-  
-- The user enters the topics and is been asked if they want to continue yes or no
-- 
+  Pull the docker image from my github container registry  packages and run in a docker container.
+```bash
+docker pull ghcr.io/micheal-ndoh/groups:slim
+```
+You can use 
+
+```bash
+docker run -it ghcr.io/micheal-ndoh/groups:slim
+```
